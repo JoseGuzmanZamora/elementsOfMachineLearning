@@ -8,26 +8,29 @@ cuatro puntos en un espacio bidimensional, determine si en conjunto
 representan un cuadrado.
 '''
 
-tuplas = [(0,5),(-5,0),(5,0),(0,-5)]
+paralelogramo = [(4,0),(0,0),(4,4),(0,4)]
 
+def distancia(punto1,punto2):
+    return np.sqrt((punto1[0] - punto2[0])**2 + (punto1[1] - punto2[1])**2)
 
-distancia1 = np.sqrt((tuplas[0][0] - tuplas[1][0])**2 + (tuplas[0][1] - tuplas[1][1])**2)
-distancia2 = np.sqrt((tuplas[0][0] - tuplas[2][0])**2 + (tuplas[0][1] - tuplas[2][1])**2)
-distancia3 = np.sqrt((tuplas[0][0] - tuplas[3][0])**2 + (tuplas[0][1] - tuplas[3][1])**2)
+def verificacion(tuplas):
+    #ver las distancias 
+    distancia1 = distancia(tuplas[0], tuplas[1])
+    distancia2 = distancia(tuplas[0], tuplas[2])
+    distancia3 = distancia(tuplas[0], tuplas[3])
+    distancias = [distancia1, distancia2, distancia3]
+    
+    primer_diagonal = distancias.index(max(distancias))
 
-distancias = [distancia1, distancia2, distancia3]
-primer_diagonal = distancias.index(max(distancias))
+    del tuplas[primer_diagonal + 1]
+    distancia_siguiente = distancia(tuplas[1], tuplas[2])
+    
+    if max(distancias) == distancia_siguiente:
+        print("Sí es cuadrado.")
+    else:
+        print("No es cuadrado.")
 
-del tuplas[primer_diagonal + 1]
-
-distancia_siguiente = np.sqrt((tuplas[1][0] - tuplas[2][0])**2 + (tuplas[1][1] - tuplas[2][1])**2)
-
-print(primer_diagonal)
-
-if max(distancias) == distancia_siguiente:
-    print("Si es cuadrado")
-else:
-    print("No es cuadrado")
+verificacion(paralelogramo)
 
 
 
