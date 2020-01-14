@@ -1,29 +1,35 @@
-# José Alejandro Guzmán Zamora 
+"""
+Square Verification Module. 
+
+Functions:
+    distancia -- finds the distance between two points 
+    verificacion -- checks if 4 points represent a square
+"""
+
 import numpy as np 
 
 def distancia(punto1,punto2):
-    return np.sqrt((punto1[0] - punto2[0])**2 + (punto1[1] - punto2[1])**2)
+    """Applies the distance formula between two points."""
+    return np.sqrt(((punto1[0]-punto2[0]) ** 2) 
+                    + ((punto1[1]-punto2[1]) ** 2))
 
 def verificacion(tuplas):
-    #ver las distancias 
-    distancia1 = distancia(tuplas[0], tuplas[1])
-    distancia2 = distancia(tuplas[0], tuplas[2])
-    distancia3 = distancia(tuplas[0], tuplas[3])
-    distancias = [distancia1, distancia2, distancia3]
+    """Evaluates the two diagonals in a quadrilateral.
     
-    primer_diagonal = distancias.index(max(distancias))
+    Arguments:
+        Tuplas -- List with 4 tuples representing the quadrilateral
+    Returns:
+        Boolean True in case it representes a square and vice versa
+    """
 
-    del tuplas[primer_diagonal + 1]
-    distancia_siguiente = distancia(tuplas[1], tuplas[2])
+    distancias = [distancia(tuplas[0], tuplas[i]) for i in range(1,len(tuplas))]
     
-    if max(distancias) == distancia_siguiente:
-        print("Sí es cuadrado.")
-    else:
-        print("No es cuadrado.")
+    primer_diagonal = max(distancias)
+    ubicacion_diagonal = distancias.index(primer_diagonal)
+    del tuplas[ubicacion_diagonal + 1]
 
-
-paralelogramo = [(4,0),(0,0),(4,4),(0,4)]
-verificacion(paralelogramo)
-
-
-
+    segunda_diagonal = distancia(tuplas[1], tuplas[2])
+    
+    if primer_diagonal == segunda_diagonal:
+        return True
+    return False 
