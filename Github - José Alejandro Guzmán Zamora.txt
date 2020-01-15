@@ -1,0 +1,2 @@
+URL:
+https://github.com/JoseGuzmanZamora/elementsOfMachineLearning/tree/master/ejerciciosPython

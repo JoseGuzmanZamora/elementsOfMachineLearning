@@ -21,7 +21,7 @@ def recorrido(info):
     top.
     
     Arguments:
-        info -- Matrix that represents the triangle
+        info -- Matrix that represents the triangle.
     Returns:
         Largest sum from path
     """
