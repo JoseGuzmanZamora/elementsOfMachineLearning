@@ -13,14 +13,18 @@ def derivada(data, theta, alpha):
     resB = np.sum(data_continue2 * (alpha/len(data)), axis=0)
     return (theta[0] + resA[1] - resA[2], (theta[1] + resB[1] - resB[2])*resB[0])
 
-def gradient_descent(derivative, data, theta, alpha):
-    while 1:
+def costo(data, theta):
+    datanueva = data.copy()
+    datanueva[:,0] = np.power(theta[0] + (data[:,1] * theta[1]) - data[:,2], 2)
+    return 1/(2 * len(data)) * np.sum(datanueva[:,0])
+
+def gradient_descent(derivative, data, theta, alpha, iteraciones):
+    for i in range(iteraciones):
         res = derivative(data, theta, alpha)
-        if abs(theta[0] - res[0]) <= 0.0001:
-            print(res)
-            break
         theta[0] -= res[0]
         theta[1] -= res[1]
+        print(costo(data, res))
+        print(res)
     
 # RANDOM DATASET 
 # y = 0.6x + 3
@@ -31,10 +35,10 @@ data = np.hstack((x,y))
 
 # recibo la data 
 info = np.hstack((np.ones(100).reshape(100,1), data))
-gradient_descent(derivada, info, [0,0], 0.01)
+gradient_descent(derivada, info, [100,100], 0.009, 500)
 
-plt.scatter(x,y)
-plt.show()
+#plt.scatter(x,y)
+#plt.show()
 
 
 
