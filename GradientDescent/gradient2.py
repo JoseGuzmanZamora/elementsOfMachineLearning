@@ -9,14 +9,27 @@ def derivada(data, theta, alpha):
     ndata[:,0] = data[:,1]
     data_continue2 = np.multiply(data, np.asarray([1,theta[1],1]))
 
-    resA = np.sum(data_continue * (alpha/len(data)), axis=0)
-    resB = np.sum(data_continue2 * (alpha/len(data)), axis=0)
+    resA = (alpha/len(data)) * np.sum(data_continue, axis=0)
+    resB = (alpha/len(data)) * np.sum(data_continue2, axis=0)
     return (theta[0] + resA[1] - resA[2], (theta[1] + resB[1] - resB[2])*resB[0])
+
+'''
+h = np.matmul(X, theta)
+m, _ = X.shape
+return np.matmul((h-y).T,X).T/m
+x tiene (m,2)
+'''
 
 def costo(data, theta):
     datanueva = data.copy()
     datanueva[:,0] = np.power(theta[0] + (data[:,1] * theta[1]) - data[:,2], 2)
     return 1/(2 * len(data)) * np.sum(datanueva[:,0])
+
+'''
+m, _ = X.shape
+h = np.matmul(X, theta)
+sq = (y - h) ** 2
+'''
 
 def gradient_descent(derivative, data, theta, alpha, iteraciones):
     for i in range(iteraciones):
@@ -35,7 +48,7 @@ data = np.hstack((x,y))
 
 # recibo la data 
 info = np.hstack((np.ones(100).reshape(100,1), data))
-gradient_descent(derivada, info, [100,100], 0.009, 500)
+gradient_descent(derivada, info, [100,100], 0.009, 1000)
 
 #plt.scatter(x,y)
 #plt.show()
