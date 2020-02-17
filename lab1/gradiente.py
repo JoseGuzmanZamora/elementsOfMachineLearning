@@ -29,20 +29,22 @@ def gradient_descent(X, Y, thetas, a, it, delta):
     - it : cantidad de iteraciones
     - delta : cambio mínimo para parar las iteraciones
     """
+    costos = []
     procesado = np.asarray(thetas, dtype='float64').reshape(len(thetas),1)
     for i in range(it):
         costo1 = np.round(cost(X,Y,procesado),4)
         procesado -= a * derivative(X,Y,procesado)
         costo = np.round(cost(X,Y,procesado),4)
-        if costo1 - costo <= delta:
+        costos.append("H(" + str(i) + ") =" + str(procesado) + " costo -> " + str(costo))
+        if np.absolute(costo1 - costo) <= delta:
             print(i)
             break
-    return procesado
+    return (procesado,costos)
 
 
-# RANDOM DATASET 
+'''# RANDOM DATASET 
 # y = 0.6x + 3
-'''x = np.asarray([np.random.randint(250) for i in range(100)]).reshape(100,1)
+x = np.asarray([np.random.randint(250) for i in range(100)]).reshape(100,1)
 ys = np.asarray([(0.6 * i + (3 * np.random.randint(10))) for i in x]).reshape(100,1)
 
 # recibo la data 
