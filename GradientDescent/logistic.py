@@ -6,22 +6,25 @@ def logistic(x, thetas):
     return 1 / (1 + np.e ** (-multi))
 
 x = [1,2,6,5,2,1,2,3,5]
-x2 = [1,2,6,5,2,1,2,3,5]
+x2 = [1,2,4,9,2,1,2,3,5]
+y = np.asarray([8,2,6,5,4,4,9,3,5])
 xc = [0,0,0,0,0,0,0,0,0]
 thetas = np.asarray([1,1,1])
 
 junto = np.asarray(np.vstack([xc,x,x2]))
 print(logistic(junto, thetas))
 
-def cost(X,Y,thetas, l):
+def cost(X,Y,thetas):
     """ 
     Calcular el costo de un conjunto de hipótesis basado en 
     la cantidad de thetas ingresados.
     """
     hipos = logistic(X, thetas)
-    regular = (l / (2 * X.shape[0]))
-    return (np.sum(np.power(hipos - Y, 2)) / (2 * X.shape[0])
-            + (regular * np.sum(thetas ** 2)))
+    antes = - 1 / X.shape[0]
+    return np.sum(np.multiply(Y, np.log(hipos))
+            + np.multiply((1 - Y), np.log(1 - hipos)))
+
+print(cost(junto, y, thetas))
 
 
 def derivative(X,Y,thetas):
