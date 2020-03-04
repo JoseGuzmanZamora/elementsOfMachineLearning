@@ -22,9 +22,9 @@ def derivative(X,Y,thetas):
     """
     hips = logistic(X, thetas)
     interno = (hips - Y).transpose()
-    return np.matmul(interno, X).transpose()
+    return (1 / X.shape[0]) * np.matmul(interno, X).transpose()
 
-def gradient_descent(X, Y, thetas, a, it, delta, l):
+def gradient_descent(X, Y, thetas, a, it):
     """
     Aplica descenso del gradiente en base a un dataset y thetas iniciales.
 
@@ -33,20 +33,13 @@ def gradient_descent(X, Y, thetas, a, it, delta, l):
     - Y : valores de entrenamiento
     - a : learning rate
     - it : cantidad de iteraciones
-    - delta : cambio mínimo para parar las iteraciones
     """
-    procesado = np.asarray(thetas, dtype='float64').reshape(len(thetas),1)
-    m, _ = X.shape
     trace = []
     for i in range(it):
-        costo1 = cost(X,Y,procesado)
-        procesado -= a * derivative(X,Y,procesado)
-        costo = cost(X,Y,procesado)
-        trace.append((i, procesado, costo))
-        if np.abs(costo1 - costo) <= delta:
-            print("no")
-            print(i)
-            break
+        costo1 = cost(X,Y,thetas)
+        thetas -= a * derivative(X,Y,thetas)
+        costo = cost(X,Y,thetas)
+        trace.append((thetas, costo))
     return trace
 
 
@@ -57,8 +50,8 @@ junto = np.vstack([xc,x,x2]).transpose()
 y = [0,1,1,0,0,1,0,1,0]
 y = np.asarray(y).reshape(len(y), 1)
 thetas = [1,1,1]
-thetas = np.asarray(thetas).reshape(len(thetas), 1)
+thetas = np.asarray(thetas, dtype='float64').reshape(len(thetas), 1)
 # IMPORTANTE AHORITA TODO YA ESTA  EN FORMA DE COLUMNA... 
 
 # tEST DE LOGISTIC O SEA H(X)
-print(cost(junto, y, thetas))
+print(gradient_descent(junto, y, thetas, 0.001, 100))
