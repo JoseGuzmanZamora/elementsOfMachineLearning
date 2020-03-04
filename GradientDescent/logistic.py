@@ -1,5 +1,5 @@
 import numpy as np 
-#import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt 
 
 def logistic(x, thetas):
     multi = np.matmul(x, thetas)
@@ -43,7 +43,7 @@ def gradient_descent(X, Y, thetas, a, it):
     return trace
 
 
-xc = [1,1,1,1,1,1,1,1,1]
+'''xc = [1,1,1,1,1,1,1,1,1]
 x = [1,2,6,5,2,1,2,3,5]
 x2 = [1,2,4,9,2,1,2,3,5]
 junto = np.vstack([xc,x,x2]).transpose()
@@ -53,5 +53,4 @@ thetas = [1,1,1]
 thetas = np.asarray(thetas, dtype='float64').reshape(len(thetas), 1)
 # IMPORTANTE AHORITA TODO YA ESTA  EN FORMA DE COLUMNA... 
 
-# tEST DE LOGISTIC O SEA H(X)
-print(gradient_descent(junto, y, thetas, 0.001, 100))
+# X, Y, THETAS TIENEN QUE SER FORMA COLUMNA'''
