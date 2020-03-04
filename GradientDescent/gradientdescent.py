@@ -46,7 +46,7 @@ def gradient_descent(X, Y, thetas, a, it, delta, l):
             break
     return trace
 
-'''
+
 # RANDOM DATASET 
 # y = 0.6x + 3
 x = np.asarray([np.random.randint(250) for i in range(100)]).reshape(100,1)
@@ -63,7 +63,7 @@ plt.scatter(x,ys)
 x = np.linspace(0,250,100)
 y = final[1][1] * x + final[1][0]
 plt.plot(x, y, '-r')
-plt.show()'''
+plt.show()
 
 
 

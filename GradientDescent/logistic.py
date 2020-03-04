@@ -2,7 +2,7 @@ import numpy as np
 #import matplotlib.pyplot as plt 
 
 def logistic(x, thetas):
-    multi = np.matmul(thetas.transpose(), x)
+    multi = np.matmul(x, thetas)
     return 1 / (1 + np.e ** (-multi))
 
 def cost(X,Y,thetas):
@@ -10,10 +10,10 @@ def cost(X,Y,thetas):
     Calcular el costo de un conjunto de hipótesis basado en 
     la cantidad de thetas ingresados.
     """
-    hipos = logistic(X, thetas)
-    antes = - 1 / X.shape[0]
-    return np.sum(np.multiply(Y, np.log(hipos))
-            + np.multiply((1 - Y), np.log(1 - hipos)))
+    hips = logistic(X, thetas)
+    prefix = - 1 / X.shape[0]
+    central = (Y * np.log(hips)) + ((1 - Y) * np.log(1 - hips))
+    return prefix * np.sum(central)
 
 def derivative(X,Y,thetas):
     """
@@ -21,13 +21,7 @@ def derivative(X,Y,thetas):
     la suma de todas las hipótesis.
     """
     hips = logistic(X, thetas)
-    print(hips)
-    print(hips.shape)
-    print(X)
-    print(X.shape)
     interno = (hips - Y).transpose()
-    print(interno)
-    print(interno.shape)
     return np.matmul(interno, X).transpose()
 
 def gradient_descent(X, Y, thetas, a, it, delta, l):
@@ -55,11 +49,16 @@ def gradient_descent(X, Y, thetas, a, it, delta, l):
             break
     return trace
 
+
+xc = [1,1,1,1,1,1,1,1,1]
 x = [1,2,6,5,2,1,2,3,5]
 x2 = [1,2,4,9,2,1,2,3,5]
-y = np.asarray([8,2,6,5,4,4,9,3,5])
-xc = [0,0,0,0,0,0,0,0,0]
-thetas = np.asarray([1,1,1])
+junto = np.vstack([xc,x,x2]).transpose()
+y = [0,1,1,0,0,1,0,1,0]
+y = np.asarray(y).reshape(len(y), 1)
+thetas = [1,1,1]
+thetas = np.asarray(thetas).reshape(len(thetas), 1)
+# IMPORTANTE AHORITA TODO YA ESTA  EN FORMA DE COLUMNA... 
 
-junto = np.asarray(np.vstack([xc,x,x2]))
-gradient_descent(junto, y, thetas, 1, 10, 0,0)
+# tEST DE LOGISTIC O SEA H(X)
+print(cost(junto, y, thetas))
