@@ -5,15 +5,6 @@ def logistic(x, thetas):
     multi = np.matmul(thetas.transpose(), x)
     return 1 / (1 + np.e ** (-multi))
 
-x = [1,2,6,5,2,1,2,3,5]
-x2 = [1,2,4,9,2,1,2,3,5]
-y = np.asarray([8,2,6,5,4,4,9,3,5])
-xc = [0,0,0,0,0,0,0,0,0]
-thetas = np.asarray([1,1,1])
-
-junto = np.asarray(np.vstack([xc,x,x2]))
-print(logistic(junto, thetas))
-
 def cost(X,Y,thetas):
     """ 
     Calcular el costo de un conjunto de hipótesis basado en 
@@ -24,16 +15,19 @@ def cost(X,Y,thetas):
     return np.sum(np.multiply(Y, np.log(hipos))
             + np.multiply((1 - Y), np.log(1 - hipos)))
 
-print(cost(junto, y, thetas))
-
-
 def derivative(X,Y,thetas):
     """
     Encontrar la derivada de la función de costo y retornar 
     la suma de todas las hipótesis.
     """
     hips = logistic(X, thetas)
+    print(hips)
+    print(hips.shape)
+    print(X)
+    print(X.shape)
     interno = (hips - Y).transpose()
+    print(interno)
+    print(interno.shape)
     return np.matmul(interno, X).transpose()
 
 def gradient_descent(X, Y, thetas, a, it, delta, l):
@@ -51,10 +45,9 @@ def gradient_descent(X, Y, thetas, a, it, delta, l):
     m, _ = X.shape
     trace = []
     for i in range(it):
-        costo1 = cost(X,Y,procesado,l)
-        procesado = (procesado * (1 - ((a * l)/m))) - (a /
-         m) * derivative(X,Y,procesado)
-        costo = cost(X,Y,procesado,l)
+        costo1 = cost(X,Y,procesado)
+        procesado -= a * derivative(X,Y,procesado)
+        costo = cost(X,Y,procesado)
         trace.append((i, procesado, costo))
         if np.abs(costo1 - costo) <= delta:
             print("no")
@@ -62,3 +55,11 @@ def gradient_descent(X, Y, thetas, a, it, delta, l):
             break
     return trace
 
+x = [1,2,6,5,2,1,2,3,5]
+x2 = [1,2,4,9,2,1,2,3,5]
+y = np.asarray([8,2,6,5,4,4,9,3,5])
+xc = [0,0,0,0,0,0,0,0,0]
+thetas = np.asarray([1,1,1])
+
+junto = np.asarray(np.vstack([xc,x,x2]))
+gradient_descent(junto, y, thetas, 1, 10, 0,0)
