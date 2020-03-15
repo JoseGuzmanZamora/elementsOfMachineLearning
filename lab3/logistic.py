@@ -9,7 +9,7 @@ def cost(X,Y,thetas):
     """ 
     Calcular el costo de un conjunto de hipótesis basado en 
     la cantidad de thetas ingresados.
-    """
+    """ 
     hips = logistic(X, thetas)
     prefix = - 1 / X.shape[0]
     central = (Y * np.log(hips)) + ((1 - Y) * np.log(1 - hips))
