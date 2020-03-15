@@ -1,10 +1,11 @@
 import numpy as np 
-#import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt 
 from scipy import optimize as op
 
 def logistic(x, thetas):
     multi = np.matmul(x, thetas)
-    return 1 / (1 + np.e ** (-multi))
+    x = 1 / (1 + np.exp(-multi))
+    return x
 
 def cost(thetas, X,Y):
     """ 
@@ -44,8 +45,13 @@ def gradient_descent(X, Y, thetas, a, it):
         trace.append((thetas, costo))
     return trace
 
+def optimize_log(x, y, thetas):
+    bd = (0,1.)
+    bds = [bd for i in range(len(x[0]))]
+    return np.expand_dims(op.minimize(cost, thetas,(x,y), method="TNC", bounds=bds).x,1)
 
-xc = [1,1,1,1,1,1,1,1,1]
+
+'''xc = [1,1,1,1,1,1,1,1,1]
 x = [1,2,6,5,2,1,2,3,5]
 x2 = [1,2,4,9,2,1,2,3,5]
 junto = np.vstack([xc,x,x2]).transpose()
@@ -58,4 +64,4 @@ thetas = np.asarray(thetas, dtype='float64').reshape(len(thetas), 1)
 # X, Y, THETAS TIENEN QUE SER FORMA COLUMNA
 res = gradient_descent(junto, y, thetas, 0.1,1000)
 ok = res[len(res) - 1]
-print(ok)
+print(ok)'''
