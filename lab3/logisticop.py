@@ -40,7 +40,7 @@ def gradient_descent(X, Y, thetas, a, it):
     for i in range(it):
         test = op.minimize(cost, thetas,(X,Y), method="BFGS")
         #thetas -= a * derivative(X,Y,thetas)
-        thetas = np.expand_dims(test.x,1)
+        #thetas = np.expand_dims(test.x,1)
         costo = cost(thetas,X,Y)
         trace.append((thetas, costo))
     return trace
