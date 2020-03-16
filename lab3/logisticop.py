@@ -7,7 +7,7 @@ def logistic(x, thetas):
     x = 1 / (1 + np.exp(-multi))
     return x
 
-def cost(thetas, X,Y):
+def cost(thetas, X, Y):
     """ 
     Calcular el costo de un conjunto de hipótesis basado en 
     la cantidad de thetas ingresados.
@@ -17,7 +17,7 @@ def cost(thetas, X,Y):
     central = (Y * np.log(hips)) + ((1 - Y) * np.log(1 - hips))
     return prefix * np.sum(central)
 
-def derivative(X,Y,thetas):
+def derivative(thetas, X,Y):
     """
     Encontrar la derivada de la función de costo y retornar 
     la suma de todas las hipótesis.
@@ -49,6 +49,12 @@ def optimize_log(x, y, thetas):
     bd = (0,1.)
     bds = [bd for i in range(len(x[0]))]
     return np.expand_dims(op.minimize(cost, thetas,(x,y), method="TNC", bounds=bds).x,1)
+
+def optimize_log2(x, y):
+    initial = np.expand_dims(np.asarray([0 for i in range(len(x[0]))]),1)
+    print(initial.shape)
+    return np.expand_dims(op.minimize(cost, initial, args=(x,y), method='BFGS', jac=derivative),1)
+
 
 
 '''xc = [1,1,1,1,1,1,1,1,1]
