@@ -17,14 +17,16 @@ def cost(thetas, X, Y):
     central = (Y * np.log(hips)) + ((1 - Y) * np.log(1 - hips))
     return prefix * np.sum(central)
 
-def derivative(thetas, X,Y):
+def derivative(thetas,X,Y):
     """
     Encontrar la derivada de la función de costo y retornar 
     la suma de todas las hipótesis.
     """
+    thetas = thetas.reshape(len(thetas), 1)
     hips = logistic(X, thetas)
     interno = (hips - Y).transpose()
-    return (1 / X.shape[0]) * np.matmul(interno, X).transpose()
+    res = (1 / X.shape[0]) * np.matmul(interno, X).transpose()
+    return np.squeeze(res)
 
 def gradient_descent(X, Y, thetas, a, it):
     """
@@ -50,10 +52,10 @@ def optimize_log(x, y, thetas):
     bds = [bd for i in range(len(x[0]))]
     return np.expand_dims(op.minimize(cost, thetas,(x,y), method="TNC", bounds=bds).x,1)
 
-def optimize_log2(x, y):
+def optimize_log2(x, y, it):
     initial = np.expand_dims(np.asarray([0 for i in range(len(x[0]))]),1)
-    print(initial.shape)
-    return np.expand_dims(op.minimize(cost, initial, args=(x,y), method='BFGS', jac=derivative),1)
+    return np.expand_dims(op.minimize(cost, initial, args=(x,y),jac=derivative,method='L-BFGS-B').x, 1)
+
 
 
 
