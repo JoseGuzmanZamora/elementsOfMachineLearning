@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 from scipy import optimize as op
 
 def logistic(x, thetas):
+    """
+    Computar el resultado de ingresar una serie de 
+    columnas con sus respectivos coeficientes a la 
+    función logística. 
+    """
     multi = np.matmul(x, thetas)
     x = 1 / (1 + np.exp(-multi))
     return x
@@ -28,48 +33,10 @@ def derivative(thetas,X,Y):
     res = (1 / X.shape[0]) * np.matmul(interno, X).transpose()
     return np.squeeze(res)
 
-def gradient_descent(X, Y, thetas, a, it):
+def optimizar(x, y, method):
     """
-    Aplica descenso del gradiente en base a un dataset y thetas iniciales.
-
-    Params:
-    - X : valores de x con columna de 1s agregada al inicio
-    - Y : valores de entrenamiento
-    - a : learning rate
-    - it : cantidad de iteraciones
+    Encontrar el punto mínimo de los coeficientes para el 
+    conjunto de columnas. 
     """
-    trace = []
-    for i in range(it):
-        test = op.minimize(cost, thetas,(X,Y), method="BFGS")
-        #thetas -= a * derivative(X,Y,thetas)
-        #thetas = np.expand_dims(test.x,1)
-        costo = cost(thetas,X,Y)
-        trace.append((thetas, costo))
-    return trace
-
-def optimize_log(x, y, thetas):
-    bd = (0,1.)
-    bds = [bd for i in range(len(x[0]))]
-    return np.expand_dims(op.minimize(cost, thetas,(x,y), method="TNC", bounds=bds).x,1)
-
-def optimize_log2(x, y, it):
     initial = np.expand_dims(np.asarray([0 for i in range(len(x[0]))]),1)
-    return np.expand_dims(op.minimize(cost, initial, args=(x,y),jac=derivative,method='L-BFGS-B').x, 1)
-
-
-
-
-'''xc = [1,1,1,1,1,1,1,1,1]
-x = [1,2,6,5,2,1,2,3,5]
-x2 = [1,2,4,9,2,1,2,3,5]
-junto = np.vstack([xc,x,x2]).transpose()
-y = [0,1,1,0,0,1,0,1,0]
-y = np.asarray(y).reshape(len(y), 1)
-thetas = [1,1,1]
-thetas = np.asarray(thetas, dtype='float64').reshape(len(thetas), 1)
-# IMPORTANTE AHORITA TODO YA ESTA  EN FORMA DE COLUMNA... 
-
-# X, Y, THETAS TIENEN QUE SER FORMA COLUMNA
-res = gradient_descent(junto, y, thetas, 0.1,1000)
-ok = res[len(res) - 1]
-print(ok)'''
+    return np.expand_dims(op.minimize(cost, initial, args=(x,y),jac=derivative,method=method).x, 1)
