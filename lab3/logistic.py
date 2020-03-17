@@ -24,7 +24,7 @@ def derivative(X,Y,thetas):
     interno = (hips - Y).transpose()
     return (1 / X.shape[0]) * np.matmul(interno, X).transpose()
 
-def gradient_descent(X, Y, thetas, a, it):
+def gradient_descent(X, Y, a, it):
     """
     Aplica descenso del gradiente en base a un dataset y thetas iniciales.
 
@@ -34,6 +34,7 @@ def gradient_descent(X, Y, thetas, a, it):
     - a : learning rate
     - it : cantidad de iteraciones
     """
+    thetas = np.expand_dims(np.asarray([0 for i in range(len(X[0]))], dtype='float64'),1)
     trace = []
     for i in range(it):
         costo1 = cost(X,Y,thetas)
