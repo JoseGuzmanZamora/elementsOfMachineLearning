@@ -12,25 +12,24 @@ def forward_setup(nodos, X):
     thetas = []
     # por el momento le voy a poner mas 1 por la output layer 
     for i in range(hidden_layers + 1):
-        temp_primero = np.asarray([1 for i in range(nodes[i])])
-        temp_primero = np.expand_dims(temp_primero,1)
-        temp_segundo = np.asarray([temp_primero for i in range(nodos[i + 1])])
-        thetas.append(np.matrix(temp_segundo))
+        temp_primero = np.expand_dims(np.asarray([1 for i in range(nodes[i])]),1)
+        thetas.append(np.matrix(np.asarray(
+            [temp_primero for i in range(nodos[i + 1])]
+            )))
     return thetas
 
 def forward_prop(X,thetas):
     inicial = X.T
-    for i in range(hidden_layers + 1):
-        respuesta_interna = sigmoid(np.matmul(thetas[i], inicial))
-        bias = [1 for i in range(respuesta_interna.shape[1])]
-        inicial = np.vstack([bias, respuesta_interna])
+    for i in thetas:
+        respuesta_interna = sigmoid(np.matmul(i, inicial))
+        inicial = np.vstack(
+            [np.ones(respuesta_interna.shape[1]), respuesta_interna]
+            )
     return inicial[1].T
 
 
-
-
 # DATASET FICTICIO
-valores = 100
+valores = 10
 def random_variable(n):
     x = np.asarray([np.random.randint(0,100) for i in range(n)])
     return np.expand_dims(x,1)
@@ -51,7 +50,7 @@ y = np.expand_dims(np.asarray(y), 1)
 
 # PARAMETERS SETUP 
 hidden_layers = 2 
-nodes_inicio = [5,3,3]
+nodes_inicio = [5,1,5,6,3]
 
 # LLAMADA A LA FUNCION
 thetas = forward_setup(nodes_inicio, xes)
