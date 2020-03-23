@@ -1,4 +1,5 @@
 import numpy as np 
+import copy 
 
 def sigmoid(values):
     return 1 / (1 + np.exp(-values))
@@ -20,16 +21,40 @@ def forward_setup(nodos, X):
 
 def forward_prop(X,thetas):
     inicial = X.T
+    trace = []
     for i in thetas:
         respuesta_interna = sigmoid(np.matmul(i, inicial))
         inicial = np.vstack(
             [np.ones(respuesta_interna.shape[1]), respuesta_interna]
             )
-    return inicial[1].T
+        trace.append(inicial)
+    return trace 
+
+def backward_setup(X,Y,thetas):
+    m,_ = X.shape
+    delta = copy.deepcopy(thetas)
+    # set delta = 0 for all i,j,l 
+    for i in delta: i[:] = 0
+    activation_trace = forward_prop(X,thetas)
+    first_res = activation_trace[-1][1].T
+    first_delta = first_res - Y 
+    backward_prop(activation_trace[:-1],thetas, first_delta)
+    
+def backward_prop(trace,thetas, delta_one):
+    deltas = []
+    siguiente_delta = delta_one
+    print(thetas)
+    for i in reversed(range(0,len(trace))):
+        if (i + 1) == len(thetas) - 1:
+            siguiente_delta = np.matmul(thetas[i+1].T,siguiente_delta)
+        else:
+            print(thetas[i + 1][1:].shape)
+            print(siguiente_delta.shape)
+            siguiente_delta = np.matmul(thetas[i + 1][1:].T,siguiente_delta)
 
 
 # DATASET FICTICIO
-valores = 10
+valores = 1
 def random_variable(n):
     x = np.asarray([np.random.randint(0,100) for i in range(n)])
     return np.expand_dims(x,1)
@@ -49,10 +74,9 @@ y = [0 if x_1[i] > 50 else 1 for i in range(valores)]
 y = np.expand_dims(np.asarray(y), 1)
 
 # PARAMETERS SETUP 
-hidden_layers = 2 
-nodes_inicio = [5,1,5,6,3]
+hidden_layers = 2
+nodes_inicio = [3,4]
 
 # LLAMADA A LA FUNCION
 thetas = forward_setup(nodes_inicio, xes)
-res = forward_prop(xes,thetas)
-print(res)
+backward_setup(xes,y, thetas)
