@@ -38,23 +38,22 @@ def backward_setup(X,Y,thetas):
     activation_trace = forward_prop(X,thetas)
     first_res = activation_trace[-1][1].T
     first_delta = first_res - Y 
-    backward_prop(activation_trace[:-1],thetas, first_delta)
+    deltas = backward_prop(activation_trace[:-1],thetas, first_delta)
     
-def backward_prop(trace,thetas, delta_one):
-    deltas = []
-    siguiente_delta = delta_one
-    print(thetas)
-    for i in reversed(range(0,len(trace))):
-        if (i + 1) == len(thetas) - 1:
-            siguiente_delta = np.matmul(thetas[i+1].T,siguiente_delta)
-        else:
-            print(thetas[i + 1][1:].shape)
-            print(siguiente_delta.shape)
-            siguiente_delta = np.matmul(thetas[i + 1][1:].T,siguiente_delta)
+def backward_prop(trace,thetas,delta_one):
+    deltas = [delta_one.T]
+    siguiente_delta = deltas[0]
+    for i in reversed(range(1,len(thetas))):
+        theta_temporal = thetas[i][:,1:].T
+        derivative = np.multiply(trace[i - 1][1:,:],1-trace[i - 1][1:,:])
+        siguiente_delta = np.multiply(np.matmul(theta_temporal,siguiente_delta),derivative)
+        deltas.append(siguiente_delta)
+    return reversed(deltas)
+
 
 
 # DATASET FICTICIO
-valores = 1
+valores = 10
 def random_variable(n):
     x = np.asarray([np.random.randint(0,100) for i in range(n)])
     return np.expand_dims(x,1)
@@ -75,7 +74,7 @@ y = np.expand_dims(np.asarray(y), 1)
 
 # PARAMETERS SETUP 
 hidden_layers = 2
-nodes_inicio = [3,4]
+nodes_inicio = [3,3]
 
 # LLAMADA A LA FUNCION
 thetas = forward_setup(nodes_inicio, xes)
