@@ -13,7 +13,7 @@ def forward_setup(nodos, X):
     thetas = []
     # por el momento le voy a poner mas 1 por la output layer 
     for i in range(hidden_layers + 1):
-        temp_primero = np.expand_dims(np.asarray([1 for i in range(nodes[i])]),1)
+        temp_primero = np.expand_dims(np.asarray([1 for i in range(nodes[i])],dtype='float64'),1)
         thetas.append(np.matrix(np.asarray(
             [temp_primero for i in range(nodos[i + 1])]
             )))
@@ -38,17 +38,22 @@ def backward_setup(X,Y,thetas):
     activation_trace = forward_prop(X,thetas)
     first_res = activation_trace[-1][1].T
     first_delta = first_res - Y 
-    deltas = backward_prop(activation_trace[:-1],thetas, first_delta)
+    cambios = backward_prop(activation_trace[:-1],thetas, first_delta)
+    # Ahora hay que hacer la suma al delta
+    for i in range(len(delta) - 1):
+        print(activation_trace[i].shape)
+        print(cambios[i + 1].shape)
     
 def backward_prop(trace,thetas,delta_one):
     deltas = [delta_one.T]
     siguiente_delta = deltas[0]
     for i in reversed(range(1,len(thetas))):
         theta_temporal = thetas[i][:,1:].T
-        derivative = np.multiply(trace[i - 1][1:,:],1-trace[i - 1][1:,:])
+        al = trace[i - 1][1:,:]
+        derivative = np.multiply(al, 1 - al)
         siguiente_delta = np.multiply(np.matmul(theta_temporal,siguiente_delta),derivative)
         deltas.append(siguiente_delta)
-    return reversed(deltas)
+    return list(reversed(deltas))
 
 
 
