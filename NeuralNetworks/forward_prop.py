@@ -5,7 +5,7 @@ def sigmoid(values):
     return 1 / (1 + np.exp(-values))
 
 def forward_setup(nodos, X):
-    nodos.insert(0,X.shape[1] - 1)
+    nodos.insert(0,X.shape[1])
     nodos.append(1)
     nodes = [i + 1 for i in nodos]
 
@@ -21,40 +21,38 @@ def forward_setup(nodos, X):
 
 def forward_prop(X,thetas):
     inicial = X.T
-    trace = []
-    for i in thetas:
-        respuesta_interna = sigmoid(np.matmul(i, inicial))
-        inicial = np.vstack(
-            [np.ones(respuesta_interna.shape[1]), respuesta_interna]
-            )
-        trace.append(inicial)
+    trace = [inicial]
+    for i in range(len(thetas)):
+        interno = np.matmul(
+            thetas[i],
+            np.vstack(
+                [np.expand_dims(np.ones(trace[i].shape[1]),0),
+                trace[i]]
+                )
+        )
+        trace.append(sigmoid(interno))
     return trace 
 
-def backward_setup(X,Y,thetas):
+def backward_prop(X,Y,thetas):
     m,_ = X.shape
     delta = copy.deepcopy(thetas)
-    # set delta = 0 for all i,j,l 
     for i in delta: i[:] = 0
     activation_trace = forward_prop(X,thetas)
-    first_res = activation_trace[-1][1].T
-    first_delta = first_res - Y 
-    cambios = backward_prop(activation_trace[:-1],thetas, first_delta)
-    # Ahora hay que hacer la suma al delta
-    for i in range(len(delta) - 1):
-        print(activation_trace[i].shape)
-        print(cambios[i + 1].shape)
-    
-def backward_prop(trace,thetas,delta_one):
-    deltas = [delta_one.T]
-    siguiente_delta = deltas[0]
+    first_delta = activation_trace[-1] - Y.T
+    deltas = [first_delta]
+    # backward prop 
     for i in reversed(range(1,len(thetas))):
-        theta_temporal = thetas[i][:,1:].T
-        al = trace[i - 1][1:,:]
-        derivative = np.multiply(al, 1 - al)
-        siguiente_delta = np.multiply(np.matmul(theta_temporal,siguiente_delta),derivative)
-        deltas.append(siguiente_delta)
-    return list(reversed(deltas))
+        first_delta = np.multiply(
+            np.matmul(thetas[i].T[1:,:],first_delta),
+            np.multiply(activation_trace[i],(1-activation_trace[i]))
+            )
+        deltas.append(first_delta)
 
+    deltas = list(reversed(deltas))
+    for i in range(len(delta)):
+        print("Aim: ",delta[i].T.shape)
+        print(activation_trace[i + 1].shape)
+        print(deltas[i].T.shape)
 
 
 # DATASET FICTICIO
@@ -65,22 +63,23 @@ def random_variable(n):
 
 x_1 = random_variable(valores)
 x_2 = random_variable(valores)
-ones = np.expand_dims(
+'''ones = np.expand_dims(
     np.asarray([1 for i in range(valores)]),
     1
-)
+)'''
 
 # aqui ya tenemos el formato esperado de las equises, como columnas  
-xes = np.hstack([ones,x_1,x_2])
+xes = np.hstack([x_1,x_2])
 
 # aqui ya tenemos el formato esperado de las yes, como columnas tmb
 y = [0 if x_1[i] > 50 else 1 for i in range(valores)]
 y = np.expand_dims(np.asarray(y), 1)
 
 # PARAMETERS SETUP 
-hidden_layers = 2
-nodes_inicio = [3,3]
+hidden_layers = 8
+nodes_inicio = [3,3,3,6,5,2,8,9]
 
 # LLAMADA A LA FUNCION
 thetas = forward_setup(nodes_inicio, xes)
-backward_setup(xes,y, thetas)
+activations = forward_prop(xes,thetas)
+backward_prop(xes,y, thetas)
