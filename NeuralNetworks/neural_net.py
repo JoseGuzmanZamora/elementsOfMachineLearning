@@ -4,7 +4,7 @@ import copy
 def sigmoid(values):
     return 1 / (1 + np.exp(-values))
 
-def forward_setup(nodos,X,Y):
+def forward_setup(nodos,X,Y,hidden_layers):
     nodos.insert(0,X.shape[1])
     nodos.append(len(Y[0]))
     nodes = [i + 1 for i in nodos]
@@ -33,8 +33,10 @@ def forward_prop(X,thetas):
         trace.append(sigmoid(interno))
     return trace 
 
-def backward_prop(thetas,X,Y):
+def backward_prop(thetas,shapes,X,Y):
     m,_ = X.shape
+    # regresar a su normalidad 
+    thetas = unflatten_zetas(thetas,shapes)
     delta = copy.deepcopy(thetas)
     for i in delta: i[:] = 0
     activation_trace = forward_prop(X,thetas)
@@ -57,32 +59,19 @@ def backward_prop(thetas,X,Y):
             np.vstack([np.ones((1,temp_shape[1])),activation_trace[i]]).T
             )
         delta[i] += multi_res / m
-    return delta 
+    return flatten_zetas(delta)[0]
     
+def flatten_zetas(thetas):
+    flat_zetas = np.asarray([])
+    shapes = []
+    for i in thetas:
+        shapes.append(i.shape)
+        flat_zetas = np.concatenate((flat_zetas,np.ravel(i)))
+    return (flat_zetas,shapes)
 
-
-# DATASET FICTICIO
-valores = 10
-def random_variable(n):
-    x = np.asarray([np.random.randint(0,100) for i in range(n)])
-    return np.expand_dims(x,1)
-
-x_1 = random_variable(valores)
-x_2 = random_variable(valores)
-
-# aqui ya tenemos el formato esperado de las equises, como columnas  
-xes = np.hstack([x_1,x_2])
-
-# aqui ya tenemos el formato esperado de las yes, como columnas tmb
-y = [0 if x_1[i] > 50 else 1 for i in range(valores)]
-y = np.expand_dims(np.asarray(y), 1)
-new_y = np.expand_dims(np.asarray([np.random.randint(0,3) for i in range(valores)]),1)
-introduce_y = (new_y == np.arange(3)).astype(int)
-
-# PARAMETERS SETUP 
-hidden_layers = 2
-nodes_inicio = [3,3]
-
-# LLAMADA A LA FUNCION
-thetas = forward_setup(nodes_inicio, xes,introduce_y)
-print(backward_prop(thetas,xes,introduce_y))
+def unflatten_zetas(flat_thetas,shapes):
+    res = []
+    for i in shapes:
+        cantidad = i[0] * i[1]
+        res.append(flat_thetas[:cantidad].reshape(i))
+    return res 
