@@ -72,12 +72,12 @@ def flatten_zetas(thetas):
 def unflatten_zetas(flat_thetas,shapes):
     res = []
     for i in shapes:
-        cantidad = i[0] * i[1]
+        cantidad = i[0] * i[1]  
         res.append(flat_thetas[:cantidad].reshape(i))
     return res 
 
 def cost(thetas,shapes,X,Y):
     thetas = unflatten_zetas(thetas,shapes)
     h = forward_prop(X,thetas)[-1]
-    calculate = np.matmul(Y,np.log(h)) + np.matmul((1 - Y),np.log(1 - h))
-    print(calculate.shape)
+    calculate = (Y * np.log(h).T) + ((1 - Y) * np.log(1 - h).T)
+    return np.sum(calculate) / (- X.shape[0])
