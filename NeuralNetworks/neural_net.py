@@ -13,7 +13,7 @@ def forward_setup(nodos,X,Y,hidden_layers):
     thetas = []
     # por el momento le voy a poner mas 1 por la output layer 
     for i in range(hidden_layers + 1):
-        temp_primero = np.expand_dims(np.asarray([1 for i in range(nodes[i])],dtype='float64'),1)
+        temp_primero = np.expand_dims(np.asarray([np.random.uniform() for i in range(nodes[i])],dtype='float64'),1)
         thetas.append(np.matrix(np.asarray(
             [temp_primero for i in range(nodos[i + 1])]
             )))
